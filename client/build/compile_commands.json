@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/pi/embed2/Opdracht-4-Sockets/client/build",
+  "command": "/usr/bin/cc  -I/home/pi/embed2/tlpi-dist/lib  -g   -o CMakeFiles/Opdracht4-client.dir/main.c.o   -c /home/pi/embed2/Opdracht-4-Sockets/client/main.c",
+  "file": "/home/pi/embed2/Opdracht-4-Sockets/client/main.c"
+}
+]
