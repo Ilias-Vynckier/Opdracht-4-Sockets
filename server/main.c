@@ -18,9 +18,38 @@
    See also ud_ucase_cl.c.
 */
 #include "ud_ucase.h"
+#include <gpiod.h>
 
-int
-main(int argc, char *argv[])
+
+char IOtog(int test)
+{
+    printf("IOtog %s\r\n", test);
+    const char *chipname = "gpiochip0";
+    struct gpiod_chip *chip;
+    struct gpiod_line *gpio26; // GPIO 19
+
+    // Open GPIO chip
+    chip = gpiod_chip_open_by_name(chipname);
+
+    // Open GPIO lines
+    gpio26 = gpiod_chip_get_line(chip, 26);
+
+    // Open switch line for input
+    gpiod_line_request_output(gpio26, "test",0);
+
+    if (strcmp(test,"DINK1")==0)
+    {
+        printf("feest\n\r");
+        gpiod_line_set_value(gpio26, 0);
+    }
+    if (strcmp(test,"DINK0")==0)
+    {
+        printf("feest\n\r");
+        gpiod_line_set_value(gpio26, 1);
+    }
+}
+
+int main(int argc, char *argv[])
 {
     struct sockaddr_un svaddr, claddr;
     int sfd, j;
@@ -28,7 +57,7 @@ main(int argc, char *argv[])
     socklen_t len;
     char buf[BUF_SIZE];
 
-    sfd = socket(AF_UNIX, SOCK_DGRAM, 0);       /* Create server socket */
+    sfd = socket(AF_UNIX, SOCK_DGRAM, 0); /* Create server socket */
     if (sfd == -1)
         errExit("socket");
 
@@ -47,27 +76,34 @@ main(int argc, char *argv[])
     svaddr.sun_family = AF_UNIX;
     strncpy(svaddr.sun_path, SV_SOCK_PATH, sizeof(svaddr.sun_path) - 1);
 
-    if (bind(sfd, (struct sockaddr *) &svaddr, sizeof(struct sockaddr_un)) == -1)
+    if (bind(sfd, (struct sockaddr *)&svaddr, sizeof(struct sockaddr_un)) == -1)
         errExit("bind");
 
     /* Receive messages, convert to uppercase, and return to client */
 
-    for (;;) {
+    for (;;)
+    {
         len = sizeof(struct sockaddr_un);
         numBytes = recvfrom(sfd, buf, BUF_SIZE, 0,
-                            (struct sockaddr *) &claddr, &len);
+                            (struct sockaddr *)&claddr, &len);
         if (numBytes == -1)
             errExit("recvfrom");
 
-        printf("Server received %ld bytes from %s\n", (long) numBytes,
-                claddr.sun_path);
+        IOtog(buf);
+
+        printf("Server received %s bytes from %s\n", buf, //
+               claddr.sun_path);
+
         /*FIXME: above: should use %zd here, and remove (long) cast */
 
         for (j = 0; j < numBytes; j++)
-            buf[j] = toupper((unsigned char) buf[j]);
+            buf[j] = toupper((unsigned char)buf[j]);
 
-        if (sendto(sfd, buf, numBytes, 0, (struct sockaddr *) &claddr, len) !=
-                numBytes)
+        if (sendto(sfd, buf, numBytes, 0, (struct sockaddr *)&claddr, len) !=
+            numBytes)
             fatal("sendto");
+        
+           bzero(buf, strlen(buf));// clears buff
     }
+   
 }

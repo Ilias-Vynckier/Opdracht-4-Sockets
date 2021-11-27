@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Opdracht4-server"
+			"path" : "Opdracht4-client"
 		}
 	],
 	"backtrace" : 1,
@@ -56,7 +56,7 @@
 			[
 				{
 					"backtrace" : 2,
-					"path" : "/home/pi/embed2/Opdracht-4-Sockets/server/../tlpi-dist/sockets"
+					"path" : "/home/pi/embed2/Opdracht-4-Sockets/client/../tlpi-dist/sockets"
 				},
 				{
 					"backtrace" : 3,
@@ -70,7 +70,7 @@
 			]
 		}
 	],
-	"id" : "Opdracht4-server::@6890427a1f51a3e7e1df",
+	"id" : "Opdracht4-client::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -90,8 +90,8 @@
 		],
 		"language" : "C"
 	},
-	"name" : "Opdracht4-server",
-	"nameOnDisk" : "Opdracht4-server",
+	"name" : "Opdracht4-client",
+	"nameOnDisk" : "Opdracht4-client",
 	"paths" : 
 	{
 		"build" : ".",

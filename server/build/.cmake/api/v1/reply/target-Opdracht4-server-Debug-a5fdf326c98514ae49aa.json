@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Opdracht4-client"
+			"path" : "Opdracht4-server"
 		}
 	],
 	"backtrace" : 1,
@@ -11,6 +11,7 @@
 		"commands" : 
 		[
 			"add_executable",
+			"include_directories",
 			"target_include_directories"
 		],
 		"files" : 
@@ -31,6 +32,12 @@
 			{
 				"command" : 1,
 				"file" : 0,
+				"line" : 8,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
 				"line" : 17,
 				"parent" : 0
 			}
@@ -49,6 +56,10 @@
 			[
 				{
 					"backtrace" : 2,
+					"path" : "/home/pi/embed2/Opdracht-4-Sockets/server/../tlpi-dist/sockets"
+				},
+				{
+					"backtrace" : 3,
 					"path" : "/home/pi/embed2/tlpi-dist/lib"
 				}
 			],
@@ -59,7 +70,7 @@
 			]
 		}
 	],
-	"id" : "Opdracht4-client::@6890427a1f51a3e7e1df",
+	"id" : "Opdracht4-server::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -75,12 +86,16 @@
 			{
 				"fragment" : "/home/pi/embed2/tlpi-dist/libtlpi.a",
 				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lgpiod",
+				"role" : "libraries"
 			}
 		],
 		"language" : "C"
 	},
-	"name" : "Opdracht4-client",
-	"nameOnDisk" : "Opdracht4-client",
+	"name" : "Opdracht4-server",
+	"nameOnDisk" : "Opdracht4-server",
 	"paths" : 
 	{
 		"build" : ".",

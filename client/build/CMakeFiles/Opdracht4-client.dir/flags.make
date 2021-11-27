@@ -6,5 +6,5 @@ C_FLAGS = -g
 
 C_DEFINES = 
 
-C_INCLUDES = -I/home/pi/embed2/tlpi-dist/lib 
+C_INCLUDES = -I/home/pi/embed2/Opdracht-4-Sockets/client/../tlpi-dist/sockets -I/home/pi/embed2/tlpi-dist/lib 
 

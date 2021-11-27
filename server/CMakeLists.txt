@@ -10,7 +10,7 @@ include_directories(../tlpi-dist/sockets)
 #make absolute path
 get_filename_component(TLPI_LIB "/home/pi/embed2/tlpi-dist/libtlpi.a" ABSOLUTE)
 #add the libraries
-target_link_libraries(Opdracht4-server ${TLPI_LIB})
+target_link_libraries(Opdracht4-server ${TLPI_LIB} gpiod)
 #make absolute path
 get_filename_component(TLPI_INCLUDE "/home/pi/embed2/tlpi-dist/lib/" ABSOLUTE)
 #add include directories
