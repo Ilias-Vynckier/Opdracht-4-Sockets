@@ -38,7 +38,7 @@
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 17,
+				"line" : 18,
 				"parent" : 0
 			}
 		]
@@ -85,6 +85,10 @@
 			},
 			{
 				"fragment" : "/home/pi/embed2/tlpi-dist/libtlpi.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lgpiod",
 				"role" : "libraries"
 			},
 			{

@@ -35,18 +35,20 @@ char IOtog(int test)
     gpio26 = gpiod_chip_get_line(chip, 26);
 
     // Open switch line for input
-    gpiod_line_request_output(gpio26, "test",0);
+    gpiod_line_request_output(gpio26, "gpio26",NULL);
 
     if (strcmp(test,"DINK1")==0)
     {
         printf("feest\n\r");
-        gpiod_line_set_value(gpio26, 0);
+       gpiod_line_set_value(gpio26, 1);
+
     }
     if (strcmp(test,"DINK0")==0)
     {
-        printf("feest\n\r");
-        gpiod_line_set_value(gpio26, 1);
+        printf("feest0\n\r");
+        gpiod_line_set_value(gpio26, 0);
     }
+    gpiod_line_release(gpio26);
 }
 
 int main(int argc, char *argv[])
