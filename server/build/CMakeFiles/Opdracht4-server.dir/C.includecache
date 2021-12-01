@@ -23,6 +23,8 @@ gpiod.h
 -
 time.h
 -
+signal.h
+-
 
 /home/pi/embed2/tlpi-dist/lib/error_functions.h
 

@@ -18,8 +18,7 @@
 */
 #include "ud_ucase.h"
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     struct sockaddr_un svaddr, claddr;
     int sfd, j;
@@ -39,9 +38,9 @@ main(int argc, char *argv[])
     memset(&claddr, 0, sizeof(struct sockaddr_un));
     claddr.sun_family = AF_UNIX;
     snprintf(claddr.sun_path, sizeof(claddr.sun_path),
-            "/tmp/ud_ucase_cl.%ld", (long) getpid());
+             "/tmp/ud_ucase_cl.%ld", (long)getpid());
 
-    if (bind(sfd, (struct sockaddr *) &claddr, sizeof(struct sockaddr_un)) == -1)
+    if (bind(sfd, (struct sockaddr *)&claddr, sizeof(struct sockaddr_un)) == -1)
         errExit("bind");
 
     /* Construct address of server */
@@ -53,34 +52,36 @@ main(int argc, char *argv[])
     /* Send messages to server; echo responses on stdout */
 
     char testbuf[50];
-    
 
-    sprintf(testbuf,"%s %s",argv[1],argv[2]);
-    printf("%s",testbuf);
+    sprintf(testbuf, "%s %s", argv[1], argv[2]);
+    printf("%s", testbuf);
 
-    msgLen = strlen(testbuf);  
-    if (sendto(sfd,testbuf, msgLen, 0, (struct sockaddr *) &svaddr,
-                sizeof(struct sockaddr_un)) != msgLen)
-            fatal("sendto");
-    
+    msgLen = strlen(testbuf);
+    if (sendto(sfd, testbuf, msgLen, 0, (struct sockaddr *)&svaddr,
+               sizeof(struct sockaddr_un)) != msgLen)
+        fatal("sendto");
 
+    while (1)
+    {
+        numBytes = recvfrom(sfd, resp, BUF_SIZE, 0, NULL, NULL);
+        if (numBytes == -1)
+            errExit("recvfrom");
+        printf("Response %d: %.*s\n", j, (int)numBytes, resp);
+    }
 
-
-    for (j = 1; j < argc; j++) {
+    /*for (j = 1; j < argc; j++) {
         msgLen = strlen(argv[j]);       /* May be longer than BUF_SIZE */
-        
-        /*if (sendto(sfd,testbuf, msgLen, 0, (struct sockaddr *) &svaddr,
+
+    /*if (sendto(sfd,testbuf, msgLen, 0, (struct sockaddr *) &svaddr,
                 sizeof(struct sockaddr_un)) != msgLen)
             fatal("sendto");
 
         numBytes = recvfrom(sfd, resp, BUF_SIZE, 0, NULL, NULL);
         /* Or equivalently: numBytes = recv(sfd, resp, BUF_SIZE, 0);
                         or: numBytes = read(sfd, resp, BUF_SIZE); */
-        if (numBytes == -1)
-            errExit("recvfrom");
-        printf("Response %d: %.*s\n", j, (int) numBytes, resp);
-    }
 
-    remove(claddr.sun_path);            /* Remove client socket pathname */
+    // }
+
+    remove(claddr.sun_path); /* Remove client socket pathname */
     exit(EXIT_SUCCESS);
 }

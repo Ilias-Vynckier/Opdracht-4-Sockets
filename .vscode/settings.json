@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "gpiod.h": "c"
+        "gpiod.h": "c",
+        "signal.h": "c"
     }
 }

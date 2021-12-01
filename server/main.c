@@ -17,11 +17,24 @@
 
    See also ud_ucase_cl.c.
 */
+
+// TODO make it possible to make more gpios toggle
 #include "ud_ucase.h"
 #include <gpiod.h>
 #include <time.h>
+#include <signal.h>
 
-char IOtog(int test)
+static volatile sig_atomic_t gotAlarm = 0;
+
+/* Set nonzero on receipt of SIGALRM */
+
+void handle_sigint(int sig)
+{
+    gotAlarm = 1;
+    printf("qsdmlfk");
+}
+
+char IOtog(int test, int sfd, ssize_t numBytes, struct sockaddr_un claddr, socklen_t len)
 {
 
     printf("IOtog %s\r\n", test);
@@ -49,27 +62,36 @@ char IOtog(int test)
     time_t interval;
     clock_t prevClock;
     prevClock = clock();
-    
 
     if (strcmp(gpig, "26") == 0)
     {
-        while (1)
+        while (!gotAlarm)
         {
-            while (((clock() - prevClock)  / CLOCKS_PER_SEC) < freq)
+            while (((clock() - prevClock) / CLOCKS_PER_SEC) < freq)
             {
             };
             prevClock = clock();
             if (vlag == 1)
             {
-                printf("on\n\r");
+                //printf("on\n\r");
                 gpiod_line_set_value(gpio26, 1);
             }
             if (vlag == 0)
             {
-                printf("off\n\r");
+                //printf("off\n\r");
                 gpiod_line_set_value(gpio26, 0);
             }
             vlag = !vlag;
+            prevClock = clock();
+
+            char buf[BUF_SIZE];
+            
+            sprintf(buf,"%d", gpiod_line_get_value(gpio26));
+            printf("freq %d\r\n", buf[0]);
+
+            if (sendto(sfd, buf, numBytes, 0, (struct sockaddr *)&claddr, len) !=
+                numBytes)
+                fatal("sendto");
         }
 
         gpiod_line_release(gpio26);
@@ -109,6 +131,10 @@ int main(int argc, char *argv[])
     /* Receive messages, convert to uppercase, and return to client */
 
     printf("buf %c\r\n", buf[2]);
+    struct sigaction sa;
+
+    signal(SIGUSR1, handle_sigint);
+    printf("akk");
 
     for (;;)
     {
@@ -118,7 +144,7 @@ int main(int argc, char *argv[])
         if (numBytes == -1)
             errExit("recvfrom");
 
-        IOtog(buf);
+        IOtog(buf, sfd, numBytes, claddr, len);
 
         printf("Server received %s bytes from %s\n", buf, //
                claddr.sun_path);
@@ -134,5 +160,6 @@ int main(int argc, char *argv[])
 
         //bzero(buf, strlen(buf));// clears buff
         memset(buf, 0, sizeof(buf));
+        gotAlarm = 0;
     }
 }
