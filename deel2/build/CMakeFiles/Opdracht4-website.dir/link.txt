@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/Opdracht4-website.dir/http_server.c.o  -o Opdracht4-website  -lgpiod 
