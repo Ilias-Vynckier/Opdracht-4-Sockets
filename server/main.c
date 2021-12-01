@@ -19,11 +19,20 @@
 */
 #include "ud_ucase.h"
 #include <gpiod.h>
-
+#include <time.h>
 
 char IOtog(int test)
 {
+
     printf("IOtog %s\r\n", test);
+
+    int gpig, sped, vlag, freq;
+
+    gpig = strtok(test, " "); // Splits string
+    sped = strtok(NULL, " ");
+    freq = atoi(sped);
+    printf("dink %d\r\n", freq);
+
     const char *chipname = "gpiochip0";
     struct gpiod_chip *chip;
     struct gpiod_line *gpio26; // GPIO 19
@@ -35,20 +44,36 @@ char IOtog(int test)
     gpio26 = gpiod_chip_get_line(chip, 26);
 
     // Open switch line for input
-    gpiod_line_request_output(gpio26, "gpio26",NULL);
+    gpiod_line_request_output(gpio26, "gpio26", NULL);
 
-    if (strcmp(test,"DINK1")==0)
-    {
-        printf("feest\n\r");
-       gpiod_line_set_value(gpio26, 1);
+    time_t interval;
+    clock_t prevClock;
+    prevClock = clock();
+    
 
-    }
-    if (strcmp(test,"DINK0")==0)
+    if (strcmp(gpig, "26") == 0)
     {
-        printf("feest0\n\r");
-        gpiod_line_set_value(gpio26, 0);
+        while (1)
+        {
+            while (((clock() - prevClock)  / CLOCKS_PER_SEC) < freq)
+            {
+            };
+            prevClock = clock();
+            if (vlag == 1)
+            {
+                printf("on\n\r");
+                gpiod_line_set_value(gpio26, 1);
+            }
+            if (vlag == 0)
+            {
+                printf("off\n\r");
+                gpiod_line_set_value(gpio26, 0);
+            }
+            vlag = !vlag;
+        }
+
+        gpiod_line_release(gpio26);
     }
-    gpiod_line_release(gpio26);
 }
 
 int main(int argc, char *argv[])
@@ -83,6 +108,8 @@ int main(int argc, char *argv[])
 
     /* Receive messages, convert to uppercase, and return to client */
 
+    printf("buf %c\r\n", buf[2]);
+
     for (;;)
     {
         len = sizeof(struct sockaddr_un);
@@ -98,14 +125,14 @@ int main(int argc, char *argv[])
 
         /*FIXME: above: should use %zd here, and remove (long) cast */
 
-        for (j = 0; j < numBytes; j++)
+        /*for (j = 0; j < numBytes; j++)
             buf[j] = toupper((unsigned char)buf[j]);
 
         if (sendto(sfd, buf, numBytes, 0, (struct sockaddr *)&claddr, len) !=
             numBytes)
-            fatal("sendto");
-        
-           bzero(buf, strlen(buf));// clears buff
+            fatal("sendto");*/
+
+        //bzero(buf, strlen(buf));// clears buff
+        memset(buf, 0, sizeof(buf));
     }
-   
 }
