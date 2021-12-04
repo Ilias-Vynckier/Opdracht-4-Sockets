@@ -18,13 +18,14 @@
 #define BACKLOG 10 // Passed to listen()
 
 void report(struct sockaddr_in *serverAddress);
+int state[50];
 
 void setHttpHeader(char httpHeader[])
 {
     // File object to return
     FILE *htmlData = fopen("../index.html", "r");
-    char gpio26[50];
-    sprintf(gpio26, "<p>gpio26 is %d</p>", gpio());
+    /*char gpio26[50];
+    sprintf(gpio26, "<p>gpio26 is %d</p>", gpio());*/
 
     char line[100];
     char responseData[8000];
@@ -33,7 +34,7 @@ void setHttpHeader(char httpHeader[])
         strcat(responseData, line);
     }
     // char httpHeader[8000] = "HTTP/1.1 200 OK\r\n\n";
-    strcat(responseData, gpio26);
+    //strcat(responseData, gpio26);
     strcat(httpHeader, responseData);
 }
 
@@ -81,9 +82,27 @@ int main(void)
 
     // Wait for a connection, create a connected socket if a connection is pending
     // -----------------------------------------------------------------------------------------------------------------
+    int i = 0;
+    int flag=0;
     while (1)
     {
         clientSocket = accept(serverSocket, NULL, NULL);
+        int gpioStateArr[50];
+        //gpioStateArr[0]=gpio();
+        sprintf(gpioStateArr, "%d", gpio());
+
+        char gpiotemp[500];
+
+        if (flag==3)
+        {
+            sprintf(gpiotemp, "<p>gpio19 is %d</p><p>gpio26 is %d</p><h1>%d</h1>", state[0], state[1], i);
+            i++;
+            flag=0;
+        }
+        flag++;
+
+        strcat(httpHeader, gpiotemp);
+
         send(clientSocket, httpHeader, sizeof(httpHeader), 0);
         close(clientSocket);
     }
@@ -126,11 +145,14 @@ int gpio()
 
     // Open switch line for input
     gpiod_line_request_output(gpio26, "gpio26", NULL);
-    gpiod_line_request_output(gpio19, "gpio26", NULL);
+    gpiod_line_request_input(gpio19, "gpio26");
 
-    gpiod_line_set_value(gpio19,0);
+    //gpiod_line_set_value(gpio19,1);
 
-    int state = gpiod_line_get_value(gpio19);
+    state[0] = gpiod_line_get_value(gpio19);
+    state[1] = gpiod_line_get_value(gpio26);
+
+    gpiod_line_release(gpio19);
     gpiod_line_release(gpio26);
 
     return state;
