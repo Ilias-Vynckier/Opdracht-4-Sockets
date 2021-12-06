@@ -83,21 +83,22 @@ int main(void)
     // Wait for a connection, create a connected socket if a connection is pending
     // -----------------------------------------------------------------------------------------------------------------
     int i = 0;
-    int flag=0;
+    int flag = 0;
     while (1)
     {
         clientSocket = accept(serverSocket, NULL, NULL);
         int gpioStateArr[50];
         //gpioStateArr[0]=gpio();
-        sprintf(gpioStateArr, "%d", gpio());
-
+        //sprintf(gpioStateArr, "%d", gpio());
+        gpio();
+        
         char gpiotemp[500];
 
-        if (flag==3)
+        if (flag == 3)
         {
             sprintf(gpiotemp, "<p>gpio19 is %d</p><p>gpio26 is %d</p><h1>%d</h1>", state[0], state[1], i);
             i++;
-            flag=0;
+            flag = 0;
         }
         flag++;
 
